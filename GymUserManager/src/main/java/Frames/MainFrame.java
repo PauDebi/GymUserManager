@@ -4,6 +4,19 @@
  */
 package Frames;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 /**
  *
  * @author Pau_Clase
@@ -28,6 +41,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
@@ -41,11 +55,25 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jLabel2);
-        jLabel2.setBounds(220, 80, 370, 300);
+        jLabel2.setBounds(220, 50, 370, 300);
 
-        jLabel1.setText("https://chatgpt.com/");
+        jLabel1.setText("User Manager");
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(350, 400, 103, 20);
+        jLabel1.setBounds(360, 370, 80, 20);
+
+        ImageIcon icono = new javax.swing.ImageIcon("./Archivos/Login.png");
+
+        Image escalada = icono.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+        jLabel3.setIcon(new ImageIcon(escalada));
+        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(710, 0, 90, 80);
 
         setBounds(0, 0, 814, 457);
     }// </editor-fold>//GEN-END:initComponents
@@ -54,32 +82,26 @@ public class MainFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jLabel2MouseClicked
 
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        try {
+        URI uri = new URI("https://github.com/PauDebi/GymUserManager");
+            Desktop.getDesktop().browse(uri);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jLabel1MouseClicked
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -92,5 +114,6 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 }
