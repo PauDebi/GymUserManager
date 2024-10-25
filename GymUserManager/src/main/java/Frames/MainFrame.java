@@ -5,7 +5,6 @@
 package Frames;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.io.IOException;
@@ -22,12 +21,15 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author Pau_Clase
  */
 public class MainFrame extends javax.swing.JFrame {
+   // private EmbeddedMediaPlayerComponent mediaPlayer
+    Boolean isLoged = false;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        jScrollPane1.setVisible(false);
     }
 
     /**
@@ -39,64 +41,131 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        mainLogo = new javax.swing.JLabel();
+        urlLabel = new javax.swing.JLabel();
+        loginLogo = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaIntentos = new javax.swing.JTable();
+        videoPlayerPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
         setResizable(false);
         getContentPane().setLayout(null);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\Pau_Clase\\Documents\\NetBeansProjects\\GymUserManager\\GymUserManager\\Archivos\\GymLogo2.png")); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
-            }
-        });
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(220, 50, 370, 300);
+        mainLogo.setIcon(new javax.swing.ImageIcon("./Archivos/GymLogo2.png"));
+        getContentPane().add(mainLogo);
+        mainLogo.setBounds(220, 50, 370, 300);
 
-        jLabel1.setText("User Manager");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        urlLabel.setText("User Manager");
+        urlLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        urlLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                urlLabelMouseClicked(evt);
             }
         });
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(360, 370, 80, 20);
+        getContentPane().add(urlLabel);
+        urlLabel.setBounds(710, 390, 80, 20);
 
         ImageIcon icono = new javax.swing.ImageIcon("./Archivos/Login.png");
 
         Image escalada = icono.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
-        jLabel3.setIcon(new ImageIcon(escalada));
-        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(710, 0, 90, 80);
+        loginLogo.setIcon(new ImageIcon(escalada));
+        loginLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        loginLogo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginLogoMouseClicked(evt);
+            }
+        });
+        getContentPane().add(loginLogo);
+        loginLogo.setBounds(710, 0, 90, 80);
+
+        tablaIntentos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Usuario", "Exercici", "Fecha", "VideoFile"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tablaIntentos);
+        if (tablaIntentos.getColumnModel().getColumnCount() > 0) {
+            tablaIntentos.getColumnModel().getColumn(0).setResizable(false);
+            tablaIntentos.getColumnModel().getColumn(1).setResizable(false);
+            tablaIntentos.getColumnModel().getColumn(2).setResizable(false);
+            tablaIntentos.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        getContentPane().add(jScrollPane1);
+        jScrollPane1.setBounds(490, 90, 310, 350);
+
+        videoPlayerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("VideoPlayer"));
+
+        javax.swing.GroupLayout videoPlayerPanelLayout = new javax.swing.GroupLayout(videoPlayerPanel);
+        videoPlayerPanel.setLayout(videoPlayerPanelLayout);
+        videoPlayerPanelLayout.setHorizontalGroup(
+            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 460, Short.MAX_VALUE)
+        );
+        videoPlayerPanelLayout.setVerticalGroup(
+            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 237, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(videoPlayerPanel);
+        videoPlayerPanel.setBounds(10, 180, 470, 260);
 
         setBounds(0, 0, 814, 457);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        
-    }//GEN-LAST:event_jLabel2MouseClicked
-
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+    private void urlLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_urlLabelMouseClicked
         try {
-        URI uri = new URI("https://github.com/PauDebi/GymUserManager");
-            Desktop.getDesktop().browse(uri);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+            Desktop.getDesktop().browse(new URI("https://github.com/PauDebi/GymUserManager"));
+        } catch (URISyntaxException|IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jLabel1MouseClicked
+        
+    }//GEN-LAST:event_urlLabelMouseClicked
 
+    private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
+        if (!isLoged){    
+            new LogingDialog(this);
+        }
+        else{
+            setLogedState(false);
+        }
+    }//GEN-LAST:event_loginLogoMouseClicked
+
+    public void setLogedState(boolean loged){
+        if (loged){
+            isLoged = true;
+            mainLogo.setVisible(false);
+            urlLabel.setVisible(false);
+            jScrollPane1.setVisible(true);
+            
+        }
+        else{
+            isLoged = false;
+            mainLogo.setVisible(true);
+            urlLabel.setVisible(true);
+            jScrollPane1.setVisible(false);
+        }
+    }
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (UnsupportedLookAndFeelException ex) {
@@ -112,8 +181,11 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel loginLogo;
+    private javax.swing.JLabel mainLogo;
+    private javax.swing.JTable tablaIntentos;
+    private javax.swing.JLabel urlLabel;
+    private javax.swing.JPanel videoPlayerPanel;
     // End of variables declaration//GEN-END:variables
 }
