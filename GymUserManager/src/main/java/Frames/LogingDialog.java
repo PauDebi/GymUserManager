@@ -39,6 +39,7 @@ public class LogingDialog extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Login");
+        setAlwaysOnTop(true);
         setResizable(false);
 
         jLabel2.setText("Email");
