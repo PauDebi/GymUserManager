@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class DataAcces {
     
-        public ArrayList<User> getUsuaris(){
+    public ArrayList<User> getUsuaris(){
         ArrayList<User> usuaris = new ArrayList<>();
         String sql = "select * from usuaris;";
         
@@ -37,8 +37,8 @@ public class DataAcces {
                 user.setPaswordHash(resultSet.getString("PasswordHash"));
                 user.setIsInstructor(resultSet.getBoolean("IsInstructor"));
                 usuaris.add(user);
-                connection.close();
             }
+                connection.close();
         }
         catch (SQLException ex) {
             Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,6 +59,34 @@ public class DataAcces {
             Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
         }
     return connection;
+    }
+    
+    
+    
+    
+    public User getUser(String email){
+        Connection connection = getConnection();
+        String sql = "select * from Usuaris where email = '" + email + "'";
+        User user = null;
+        
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql)) {
+            
+            user = new User();
+            ResultSet resultSet =  selectStatement.executeQuery();
+            resultSet.next();
+            user.setId(resultSet.getInt("Id"));
+            user.setNom(resultSet.getString("Nom"));
+            user.setEmail(resultSet.getString("Email"));
+            user.setPaswordHash(resultSet.getString("PasswordHash"));
+            user.setIsInstructor(resultSet.getBoolean("IsInstructor"));
+            return user;
+        }
+        catch (SQLException ex) {
+            
+        }
+        
+        return user;
+        
     }
     
 }

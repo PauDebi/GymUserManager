@@ -29,7 +29,8 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        jScrollPane1.setVisible(false);
+        setLogedState(false);
+        
     }
 
     /**
@@ -44,9 +45,9 @@ public class MainFrame extends javax.swing.JFrame {
         mainLogo = new javax.swing.JLabel();
         urlLabel = new javax.swing.JLabel();
         loginLogo = new javax.swing.JLabel();
+        videoPlayerPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaIntentos = new javax.swing.JTable();
-        videoPlayerPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
@@ -55,7 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mainLogo.setIcon(new javax.swing.ImageIcon("./Archivos/GymLogo2.png"));
         getContentPane().add(mainLogo);
-        mainLogo.setBounds(220, 50, 370, 300);
+        mainLogo.setBounds(420, 160, 370, 300);
 
         urlLabel.setText("User Manager");
         urlLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -65,7 +66,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(urlLabel);
-        urlLabel.setBounds(710, 390, 80, 20);
+        urlLabel.setBounds(1090, 550, 80, 20);
 
         ImageIcon icono = new javax.swing.ImageIcon("./Archivos/Login.png");
 
@@ -78,7 +79,23 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(loginLogo);
-        loginLogo.setBounds(710, 0, 90, 80);
+        loginLogo.setBounds(1100, 0, 90, 80);
+
+        videoPlayerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("VideoPlayer"));
+
+        javax.swing.GroupLayout videoPlayerPanelLayout = new javax.swing.GroupLayout(videoPlayerPanel);
+        videoPlayerPanel.setLayout(videoPlayerPanelLayout);
+        videoPlayerPanelLayout.setHorizontalGroup(
+            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 600, Short.MAX_VALUE)
+        );
+        videoPlayerPanelLayout.setVerticalGroup(
+            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 307, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(videoPlayerPanel);
+        videoPlayerPanel.setBounds(200, 250, 610, 330);
 
         tablaIntentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -108,25 +125,9 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(490, 90, 310, 350);
+        jScrollPane1.setBounds(820, 110, 350, 470);
 
-        videoPlayerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("VideoPlayer"));
-
-        javax.swing.GroupLayout videoPlayerPanelLayout = new javax.swing.GroupLayout(videoPlayerPanel);
-        videoPlayerPanel.setLayout(videoPlayerPanelLayout);
-        videoPlayerPanelLayout.setHorizontalGroup(
-            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 460, Short.MAX_VALUE)
-        );
-        videoPlayerPanelLayout.setVerticalGroup(
-            videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 237, Short.MAX_VALUE)
-        );
-
-        getContentPane().add(videoPlayerPanel);
-        videoPlayerPanel.setBounds(10, 180, 470, 260);
-
-        setBounds(0, 0, 814, 457);
+        setBounds(0, 0, 1206, 642);
     }// </editor-fold>//GEN-END:initComponents
 
     private void urlLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_urlLabelMouseClicked
@@ -139,20 +140,19 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_urlLabelMouseClicked
 
     private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
-        if (!isLoged){    
+        if (!isLoged)   
             new LogingDialog(this);
-        }
-        else{
+        else
             setLogedState(false);
-        }
     }//GEN-LAST:event_loginLogoMouseClicked
-
+    
     public void setLogedState(boolean loged){
         if (loged){
             isLoged = true;
             mainLogo.setVisible(false);
             urlLabel.setVisible(false);
             jScrollPane1.setVisible(true);
+            videoPlayerPanel.setVisible(true);
             
         }
         else{
@@ -160,6 +160,7 @@ public class MainFrame extends javax.swing.JFrame {
             mainLogo.setVisible(true);
             urlLabel.setVisible(true);
             jScrollPane1.setVisible(false);
+            videoPlayerPanel.setVisible(false);
         }
     }
     /**
