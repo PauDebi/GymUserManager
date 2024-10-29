@@ -4,6 +4,7 @@
  */
 package Frames;
 
+import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.Desktop;
 import java.awt.Image;
@@ -48,6 +49,8 @@ public class MainFrame extends javax.swing.JFrame {
         videoPlayerPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaIntentos = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        userList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
@@ -87,15 +90,15 @@ public class MainFrame extends javax.swing.JFrame {
         videoPlayerPanel.setLayout(videoPlayerPanelLayout);
         videoPlayerPanelLayout.setHorizontalGroup(
             videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 490, Short.MAX_VALUE)
         );
         videoPlayerPanelLayout.setVerticalGroup(
             videoPlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 307, Short.MAX_VALUE)
+            .addGap(0, 287, Short.MAX_VALUE)
         );
 
         getContentPane().add(videoPlayerPanel);
-        videoPlayerPanel.setBounds(200, 250, 610, 330);
+        videoPlayerPanel.setBounds(50, 240, 500, 310);
 
         tablaIntentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -125,7 +128,18 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(820, 110, 350, 470);
+        jScrollPane1.setBounds(590, 80, 490, 470);
+
+        userList.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuarios"));
+        userList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                userListValueChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(userList);
+
+        getContentPane().add(jScrollPane3);
+        jScrollPane3.setBounds(40, 20, 150, 200);
 
         setBounds(0, 0, 1206, 642);
     }// </editor-fold>//GEN-END:initComponents
@@ -145,24 +159,41 @@ public class MainFrame extends javax.swing.JFrame {
         else
             setLogedState(false);
     }//GEN-LAST:event_loginLogoMouseClicked
-    
-    public void setLogedState(boolean loged){
-        if (loged){
-            isLoged = true;
-            mainLogo.setVisible(false);
-            urlLabel.setVisible(false);
-            jScrollPane1.setVisible(true);
-            videoPlayerPanel.setVisible(true);
-            
+
+    private void userListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_userListValueChanged
+        if (!evt.getValueIsAdjusting()) { // Para evitar eventos duplicados
+            String selectedClient = userList.getSelectedValue();
+            if (selectedClient != null) {
+                String[] parts = selectedClient.split(":");
+                String clientId = parts[1]; // El ID del cliente está después de los dos puntos
+
+                Logica.updateTable(Integer.parseInt(clientId), tablaIntentos);
+            }
         }
-        else{
-            isLoged = false;
-            mainLogo.setVisible(true);
-            urlLabel.setVisible(true);
-            jScrollPane1.setVisible(false);
-            videoPlayerPanel.setVisible(false);
+    }//GEN-LAST:event_userListValueChanged
+    
+    public void setLogedState(boolean loged) {
+        isLoged = loged;
+
+        updateVisibility(loged);
+
+        // Solo actualizamos la tabla y la lista de clientes si estamos logueados
+        if (loged) {
+            Logica.updateTable(tablaIntentos);
+            Logica.updateClientList(userList);
         }
     }
+
+    private void updateVisibility(boolean loged) {
+        mainLogo.setVisible(!loged);
+        urlLabel.setVisible(!loged);
+        jScrollPane1.setVisible(loged);
+        videoPlayerPanel.setVisible(loged);
+        jScrollPane3.setVisible(loged);
+    }
+    
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -183,10 +214,12 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel loginLogo;
     private javax.swing.JLabel mainLogo;
     private javax.swing.JTable tablaIntentos;
     private javax.swing.JLabel urlLabel;
+    private javax.swing.JList<String> userList;
     private javax.swing.JPanel videoPlayerPanel;
     // End of variables declaration//GEN-END:variables
 }

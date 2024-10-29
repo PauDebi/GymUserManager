@@ -4,12 +4,15 @@
  */
 package Logica;
 
+import DTOs.Intent;
 import DTOs.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,6 +90,80 @@ public class DataAcces {
         
         return user;
         
+    }
+    
+    public ArrayList<Intent> getIntents(int idUsuari){
+        ArrayList<Intent> intents = new ArrayList<>();
+        Connection connection = getConnection();
+        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+                     "FROM Intents i " +
+                     "JOIN Exercicis e ON i.idExercici = e.Id " +
+                     "WHERE i.idUsuari = ?;";
+
+
+        try {
+            PreparedStatement selectStatement = connection.prepareStatement(sql);
+            selectStatement.setInt(1, idUsuari);
+
+            ResultSet rs = selectStatement.executeQuery();
+
+            while (rs.next()){
+
+                Timestamp timestampInici = rs.getTimestamp("Timestamp_Inici");
+
+                LocalDateTime inici = (timestampInici != null) ? timestampInici.toLocalDateTime() : null;
+
+                Intent intento = new Intent();
+                intento.setId(rs.getInt("id"));
+                intento.setIdUsuari(rs.getInt("IdUsuari"));
+                intento.setExercici(rs.getString("Descripcio"));
+                intento.setInici(inici);
+                intento.setVideoFile(rs.getString("Videofile"));;
+
+                intents.add(intento);
+            }
+            rs.close();
+            selectStatement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return intents;
+    }
+    
+    public ArrayList<Intent> getIntents(){
+        ArrayList<Intent> intents = new ArrayList<>();
+        Connection connection = getConnection();
+        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+                     "FROM Intents i " +
+                     "JOIN Exercicis e ON i.idExercici = e.Id ;";
+
+
+        try {
+            PreparedStatement selectStatement = connection.prepareStatement(sql);
+
+            ResultSet rs = selectStatement.executeQuery();
+
+            while (rs.next()){
+
+                Timestamp timestampInici = rs.getTimestamp("Timestamp_Inici");
+
+                LocalDateTime inici = (timestampInici != null) ? timestampInici.toLocalDateTime() : null;
+
+                Intent intento = new Intent();
+                intento.setId(rs.getInt("id"));
+                intento.setIdUsuari(rs.getInt("IdUsuari"));
+                intento.setExercici(rs.getString("Descripcio"));
+                intento.setInici(inici);
+                intento.setVideoFile(rs.getString("Videofile"));
+
+                intents.add(intento);
+            }
+            rs.close();
+            selectStatement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return intents;
     }
     
 }
