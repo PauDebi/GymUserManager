@@ -131,6 +131,11 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane1.setBounds(590, 80, 490, 470);
 
         userList.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuarios"));
+        userList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                userListKeyPressed(evt);
+            }
+        });
         userList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 userListValueChanged(evt);
@@ -165,12 +170,19 @@ public class MainFrame extends javax.swing.JFrame {
             String selectedClient = userList.getSelectedValue();
             if (selectedClient != null) {
                 String[] parts = selectedClient.split(":");
-                String clientId = parts[1]; // El ID del cliente está después de los dos puntos
+                String clientId = parts[1];
 
                 Logica.updateTable(Integer.parseInt(clientId), tablaIntentos);
             }
         }
     }//GEN-LAST:event_userListValueChanged
+
+    private void userListKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userListKeyPressed
+        if (evt.getKeyCode() == 27){
+            userList.clearSelection();
+            Logica.updateTable(tablaIntentos);
+        }
+    }//GEN-LAST:event_userListKeyPressed
     
     public void setLogedState(boolean loged) {
         isLoged = loged;
