@@ -6,6 +6,7 @@ package Frames;
 
 import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -24,6 +26,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class MainFrame extends javax.swing.JFrame {
    // private EmbeddedMediaPlayerComponent mediaPlayer
     Boolean isLoged = false;
+    StringBuilder changeColor = new StringBuilder();
 
     /**
      * Creates new form MainFrame
@@ -55,6 +58,11 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         mainLogo.setIcon(new javax.swing.ImageIcon("./Archivos/GymLogo2.png"));
@@ -183,6 +191,45 @@ public class MainFrame extends javax.swing.JFrame {
             Logica.updateTable(tablaIntentos);
         }
     }//GEN-LAST:event_userListKeyPressed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // Acumula caracteres si es letra o espacio
+        if (Character.isLetter(evt.getKeyChar()) || Character.isWhitespace(evt.getKeyChar())) {
+            changeColor.append(evt.getKeyChar());
+
+            // Verifica si la palabra acumulada coincide con una palabra clave
+            String palabra = changeColor.toString();
+            if (palabra.endsWith("white")) { // Reemplaza "palabraClave" con la palabra que deseas detectar
+                cambiarColorWhite(); // Método que cambia el color o realiza alguna acción
+                changeColor.setLength(0); // Limpia el acumulador si es necesario
+            }
+            if (palabra.endsWith("black")) { // Reemplaza "palabraClave" con la palabra que deseas detectar
+                cambiarColorBlack(); // Método que cambia el color o realiza alguna acción
+                changeColor.setLength(0); // Limpia el acumulador si es necesario
+            }
+        }
+        Logica.checkWord();
+    }//GEN-LAST:event_formKeyPressed
+    
+    public void cambiarColorWhite(){
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     public void cambiarColorBlack(){
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     
     public void setLogedState(boolean loged) {
         isLoged = loged;

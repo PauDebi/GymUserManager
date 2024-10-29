@@ -130,12 +130,19 @@ public class DataAcces {
         return intents;
     }
     
-    public ArrayList<Intent> getIntents(){
+    public ArrayList<Intent> getIntentsPending(){
         ArrayList<Intent> intents = new ArrayList<>();
         Connection connection = getConnection();
-        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
-                     "FROM Intents i " +
-                     "JOIN Exercicis e ON i.idExercici = e.Id ;";
+        String sql = "SELECT \n"
+                + "	e.id, \n"
+                + "	e.Descripcio, \n"
+                + "	Timestamp_inici, \n"
+                + "	IdUsuari, \n"
+                + "	Videofile \n"
+                + "FROM Intents i \n"
+                + "JOIN Exercicis e ON i.idExercici = e.Id \n"
+                + "where i.id not in (select IdIntent from review)"
+                + "order by Timestamp_inici;";
 
 
         try {

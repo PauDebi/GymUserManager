@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -58,7 +59,7 @@ public class Logica {
         
         public static void updateTable(JTable tabla){
             DataAcces da = new DataAcces();
-            ArrayList<Intent> intents = da.getIntents();
+            ArrayList<Intent> intents = da.getIntentsPending();
 
             DefaultTableModel model = (DefaultTableModel) tabla.getModel();
             model.setRowCount(0);
@@ -74,6 +75,9 @@ public class Logica {
                 
                 model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), i.getVideoFile()});
             }
+            tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            tabla.getSelectionModel().setSelectionInterval(0, 0);
+            
         }
         
         
@@ -90,6 +94,10 @@ public class Logica {
 
 
             clientList.setModel(demoList);
+        }
+        
+        public static void checkWord(){
+            
         }
     
 }
