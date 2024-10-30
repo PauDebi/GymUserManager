@@ -5,6 +5,7 @@
 package Logica;
 
 import DTOs.Intent;
+import DTOs.Review;
 import DTOs.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -130,24 +131,15 @@ public class DataAcces {
         return intents;
     }
     
-    public ArrayList<Intent> getIntentsPending(){
+    public ArrayList<Intent> getIntents(){
         ArrayList<Intent> intents = new ArrayList<>();
         Connection connection = getConnection();
-        String sql = "SELECT \n"
-                + "	e.id, \n"
-                + "	e.Descripcio, \n"
-                + "	Timestamp_inici, \n"
-                + "	IdUsuari, \n"
-                + "	Videofile \n"
-                + "FROM Intents i \n"
-                + "JOIN Exercicis e ON i.idExercici = e.Id \n"
-                + "where i.id not in (select IdIntent from review)"
-                + "order by Timestamp_inici;";
+        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+                     "FROM Intents i " +
+                     "JOIN Exercicis e ON i.idExercici = e.Id ";
 
 
-        try {
-            PreparedStatement selectStatement = connection.prepareStatement(sql);
-
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql);){
             ResultSet rs = selectStatement.executeQuery();
 
             while (rs.next()){
@@ -173,4 +165,29 @@ public class DataAcces {
         return intents;
     }
     
+    public ArrayList<Review> getReviews(){
+        ArrayList<Review> reviews = new ArrayList<>();
+        Connection connection = getConnection();
+        
+        String sql = "select * from review;";
+        
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql);){
+            ResultSet resultSet =  selectStatement.executeQuery();
+            while (resultSet.next()){
+                Review review = new Review();
+
+                review.setId(resultSet.getInt("Id"));
+                review.setIdIntent(resultSet.getInt("IdIntent"));
+                review.setIdReviewer(resultSet.getInt("IdReviewer"));
+                review.setValoracion(resultSet.getInt("Valoracio"));
+                review.setComentari(resultSet.getString("Comentari"));
+                reviews.add(review);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return reviews;   
+    }
 }

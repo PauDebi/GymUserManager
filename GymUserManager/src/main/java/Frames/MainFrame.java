@@ -34,7 +34,6 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         setLogedState(false);
-        
     }
 
     /**
@@ -167,10 +166,10 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_urlLabelMouseClicked
 
     private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
-        if (!isLoged)   
-            new LogingDialog(this);
-        else
+        if (isLoged)   
             setLogedState(false);
+        else
+            new LogingDialog(this);
     }//GEN-LAST:event_loginLogoMouseClicked
 
     private void userListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_userListValueChanged
@@ -185,13 +184,16 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_userListValueChanged
 
+    //Desceleccoionar la lista de usuarios al pulsar esc
     private void userListKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userListKeyPressed
         if (evt.getKeyCode() == 27){
             userList.clearSelection();
             Logica.updateTable(tablaIntentos);
+            this.setFocusable(true);
         }
     }//GEN-LAST:event_userListKeyPressed
 
+    //Cabmiar look and feel si se escribe white || black
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         // Acumula caracteres si es letra o espacio
         if (Character.isLetter(evt.getKeyChar()) || Character.isWhitespace(evt.getKeyChar())) {
@@ -208,7 +210,6 @@ public class MainFrame extends javax.swing.JFrame {
                 changeColor.setLength(0); // Limpia el acumulador si es necesario
             }
         }
-        Logica.checkWord();
     }//GEN-LAST:event_formKeyPressed
     
     public void cambiarColorWhite(){

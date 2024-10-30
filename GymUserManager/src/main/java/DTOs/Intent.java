@@ -79,9 +79,11 @@ public class Intent {
     public void setVideoFile(String videoFile) {
         this.videoFile = videoFile;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "Intent{" + "id=" + id + ", idUsuari=" + idUsuari + ", exercici=" + exercici + ", inici=" + inici + ", fi=" + fi + ", videoFile=" + videoFile + '}';
+    }
     
     
     

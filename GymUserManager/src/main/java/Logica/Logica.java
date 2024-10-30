@@ -5,6 +5,7 @@
 package Logica;
 
 import DTOs.Intent;
+import DTOs.Review;
 import DTOs.User;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import at.favre.lib.crypto.bcrypt.BCrypt.Result;
@@ -37,67 +38,91 @@ public class Logica {
         return false;
     }
     
-        public static void updateTable(int idUsuari, JTable tabla){
-            DataAcces da = new DataAcces();
-            ArrayList<Intent> intents = da.getIntents(idUsuari);
+    public static void updateTable(int idUsuari, JTable tabla){
+        DataAcces da = new DataAcces();
+        ArrayList<Intent> intents = da.getIntents(idUsuari);
 
-            DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-            model.setRowCount(0);
-            
-            String nombreUsuario = "No User";
-            ArrayList<User> users = da.getUsuaris();
-            for (User usuario : users)
-                    if (usuario.getId() == idUsuari){
-                        nombreUsuario = usuario.getNom();
-                        break;
-                    }
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+        model.setRowCount(0);
+        model.setColumnCount(5);
+        model.setColumnIdentifiers(new Object[]{"Nombre", "Ejercicio", "Fecha", "Esta Revisado", "Archivo de Video"});
 
-
-            for(Intent i : intents)
-                model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), i.getVideoFile()});
-        }
-        
-        public static void updateTable(JTable tabla){
-            DataAcces da = new DataAcces();
-            ArrayList<Intent> intents = da.getIntentsPending();
-
-            DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-            model.setRowCount(0);
-
-            ArrayList<User> users = da.getUsuaris();
-            for(Intent i : intents){
-                String nombreUsuario = "No User";
-                for (User usuario : users)
-                    if (usuario.getId() == i.getIdUsuari()){
-                        nombreUsuario = usuario.getNom();
-                        break;
-                    }
-                
-                model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), i.getVideoFile()});
+        String nombreUsuario = "No User";
+        ArrayList<User> users = da.getUsuaris();
+        for (User usuario : users) {
+            if (usuario.getId() == idUsuari){
+                nombreUsuario = usuario.getNom();
+                break;
             }
-            tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            tabla.getSelectionModel().setSelectionInterval(0, 0);
+        }
+        ArrayList<Review> reviews = da.getReviews();
+
+        
+        for (Intent i : intents) {
+            String isReviewd = "No";
+            for (Review review : reviews) {
+                if (i.getId() == review.getIdIntent()) {
+                    isReviewd = "Si";
+                    break; // Salimos del bucle si encontramos una coincidencia
+                }
+            }
+            model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), isReviewd, i.getVideoFile()});
+        }
+
+
+    }
+        
+    public static void updateTable(JTable tabla){
+        DataAcces da = new DataAcces();
+        ArrayList<Intent> intents = da.getIntents();
+
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+        model.setRowCount(0);
+        model.setColumnCount(4);
+        model.setColumnIdentifiers(new Object[]{"Nombre", "Ejercicio", "Fecha", "Archivo de Video"});
+
+        ArrayList<User> users = da.getUsuaris();
+        for(Intent i : intents){
+            String nombreUsuario = "No User";
+            for (User usuario : users)
+                if (usuario.getId() == i.getIdUsuari()){
+                    nombreUsuario = usuario.getNom();
+                    break;
+                }
             
+            if (!isReviewed(i))
+                model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), i.getVideoFile()});
         }
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabla.getSelectionModel().setSelectionInterval(0, 0);
+
+    }
+    
+    private static boolean isReviewed(Intent intento){
+        DataAcces da = new DataAcces();
+        ArrayList<Review> reviews = da.getReviews();
+        for (Review r : reviews){
+            if (r.getIdIntent() == intento.getId()){
+                return true;
+            }
+        }
+        return false;
+    }
         
         
-        public static void updateClientList(JList clientList){
-            DataAcces da = new DataAcces();
-            ArrayList<User> usuaris = da.getUsuaris();
+    public static void updateClientList(JList clientList){
+        DataAcces da = new DataAcces();
+        ArrayList<User> usuaris = da.getUsuaris();
 
 
-            DefaultListModel<String> demoList = new DefaultListModel<>();
-            demoList.clear();
-            for (User usuari : usuaris)
-                if (!usuari.isIsInstructor())
-                    demoList.addElement(usuari.getNom() + ":" + usuari.getId());
+        DefaultListModel<String> demoList = new DefaultListModel<>();
+        demoList.clear();
+        for (User usuari : usuaris)
+            if (!usuari.isIsInstructor())
+                demoList.addElement(usuari.getNom() + ":" + usuari.getId());
 
 
-            clientList.setModel(demoList);
-        }
-        
-        public static void checkWord(){
-            
-        }
+        clientList.setModel(demoList);
+    }
     
 }
