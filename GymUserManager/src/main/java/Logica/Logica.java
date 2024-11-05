@@ -68,8 +68,9 @@ public class Logica {
             }
             model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), isReviewd, i.getVideoFile()});
         }
-
-
+        
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabla.getSelectionModel().setSelectionInterval(0, 0);
     }
         
     public static void updateTable(JTable tabla){

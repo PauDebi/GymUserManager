@@ -158,7 +158,6 @@ public class DataAcces {
                 intents.add(intento);
             }
             rs.close();
-            selectStatement.close();
         } catch (SQLException ex) {
             Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
         }
