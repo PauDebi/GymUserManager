@@ -9,6 +9,7 @@ import DTOs.Review;
 import DTOs.User;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import at.favre.lib.crypto.bcrypt.BCrypt.Result;
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
@@ -16,6 +17,7 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /**
  *
@@ -124,6 +126,56 @@ public class Logica {
 
 
         clientList.setModel(demoList);
+    }
+
+    public static ArrayList<File> readVideos() {
+        ArrayList<File> lista = new ArrayList<File>();
+        
+        File directorio = new File("Archivos/videos");
+        
+        if (directorio.exists() && directorio.isDirectory()) {
+            File[] archivos = directorio.listFiles();
+            
+            if (archivos != null) {
+                for (File archivo : archivos) {
+                    // Filtra los archivos de video usando su extensión
+                    if (archivo.isFile() && (archivo.getName().endsWith(".mp4"))) {
+                        lista.add(archivo); // Agrega el archivo de video a la lista
+                    }
+                }
+            }
+        }
+        
+        return lista;
+    }
+
+    public static void addAcctionListenerTable(JTable tablaIntentos, EmbeddedMediaPlayerComponent mediaPlayer, ArrayList<File> videos) {
+        tablaIntentos.getSelectionModel().addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting()) { // Evitar eventos duplicados
+                int selectedRow = tablaIntentos.getSelectedRow();
+                if (selectedRow != -1) {
+                    // Obtener el nombre del video de la última columna en la fila seleccionada
+                    String videoName = (String) tablaIntentos.getValueAt(selectedRow, tablaIntentos.getColumnCount() - 1);
+
+                    // Buscar el archivo en la lista videos
+                    File videoFile = null;
+                    for (File file : videos){
+                        if (file.getName().equals(videoName)){
+                            videoFile = file;
+                            break;
+                        }
+                    }
+
+                    if (videoFile != null && videoFile.exists()) {
+                        // Reproducir el video en mediaPlayer
+                        mediaPlayer.mediaPlayer().media().play(videoFile.getAbsolutePath());
+                        System.out.println(videoFile.getAbsolutePath());
+                    } else {
+                        System.out.println("No se encontró el archivo de video: " + videoName);
+                    }
+                }
+            }
+        });
     }
     
 }
