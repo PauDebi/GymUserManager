@@ -7,13 +7,17 @@ package Logica;
 import DTOs.Intent;
 import DTOs.Review;
 import DTOs.User;
+import Frames.MainFrame;
+import Frames.VideoPlayerTest;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import at.favre.lib.crypto.bcrypt.BCrypt.Result;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -149,33 +153,34 @@ public class Logica {
         return lista;
     }
 
-    public static void addAcctionListenerTable(JTable tablaIntentos, EmbeddedMediaPlayerComponent mediaPlayer, ArrayList<File> videos) {
+    public static void addAcctionListenerTable(JTable tablaIntentos, EmbeddedMediaPlayerComponent mediaPlayerComponente, ArrayList<File> videos, MainFrame frame, JPanel videoPlayerPanel) {
         tablaIntentos.getSelectionModel().addListSelectionListener(evt -> {
-            if (!evt.getValueIsAdjusting()) { // Evitar eventos duplicados
-                int selectedRow = tablaIntentos.getSelectedRow();
-                if (selectedRow != -1) {
-                    // Obtener el nombre del video de la última columna en la fila seleccionada
-                    String videoName = (String) tablaIntentos.getValueAt(selectedRow, tablaIntentos.getColumnCount() - 1);
+            JTable tablaAcutal = frame.getTablaIntentos();
+                if (!evt.getValueIsAdjusting()) { // Evitar eventos duplicados
+                    int selectedRow = tablaAcutal.getSelectedRow();
+                    if (selectedRow != -1) {
+                        // Obtener el nombre del video de la última columna en la fila seleccionada
+                        String videoName = (String) tablaAcutal.getValueAt(selectedRow, tablaAcutal.getColumnCount() - 1);
 
-                    // Buscar el archivo en la lista videos
-                    File videoFile = null;
-                    for (File file : videos){
-                        if (file.getName().equals(videoName)){
-                            videoFile = file;
-                            break;
+                        // Buscar el archivo en la lista videos
+                        File videoFile = null;
+                        for (File file : videos){ // para evitar esto se podria hacer un map, pero al haber tan pocos archivos no lo veo necesario
+                            if (file.getName().equals(videoName)){
+                                videoFile = file;
+                                break;
+                            }
                         }
-                    }
+                        if (videoFile != null && videoFile.exists()) {
+                            mediaPlayerComponente.mediaPlayer().media().play(videoFile.getAbsolutePath()); // Reproduce el video
+                            System.out.println("Reproduciendo: " + videoFile.getAbsolutePath());
+                        } else {
+                            System.out.println("No se encontró el archivo de video: " + videoName);
+                        }
 
-                    if (videoFile != null && videoFile.exists()) {
-                        // Reproducir el video en mediaPlayer
-                        mediaPlayer.mediaPlayer().media().play(videoFile.getAbsolutePath());
-                        System.out.println(videoFile.getAbsolutePath());
-                    } else {
-                        System.out.println("No se encontró el archivo de video: " + videoName);
                     }
                 }
-            }
         });
     }
     
 }
+

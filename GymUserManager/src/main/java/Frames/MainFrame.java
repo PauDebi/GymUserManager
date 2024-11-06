@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -28,7 +29,7 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
  * @author Pau_Clase
  */
 public class MainFrame extends javax.swing.JFrame {
-    private EmbeddedMediaPlayerComponent mediaPlayer;
+    private EmbeddedMediaPlayerComponent mediaPlayerComponente = new EmbeddedMediaPlayerComponent();
     private Boolean isLoged = false;
     private StringBuilder changeColor = new StringBuilder();
     private ArrayList<File> videos = Logica.readVideos();
@@ -39,10 +40,9 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        mediaPlayer = new EmbeddedMediaPlayerComponent();
-        videoPlayerPanel.add(mediaPlayer, BorderLayout.CENTER);
-        Logica.addAcctionListenerTable(tablaIntentos, mediaPlayer, videos);
-        setLogedState(false);
+        Logica.addAcctionListenerTable(tablaIntentos, mediaPlayerComponente, videos, this, videoPlayerPanel);
+        setLogedState(false); 
+        prepareVideoPlayer();
     }
 
     /**
@@ -118,17 +118,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         tablaIntentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Usuario", "Exercici", "Fecha", "VideoFile"
+                "Usuario", "Exercici", "Fecha", "VideoFile", "Temp"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -165,6 +165,13 @@ public class MainFrame extends javax.swing.JFrame {
         setBounds(0, 0, 1206, 642);
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    private void prepareVideoPlayer(){
+        videoPlayerPanel.setLayout(new BorderLayout());
+        videoPlayerPanel.add(mediaPlayerComponente, BorderLayout.CENTER); // Agrega mediaPlayerComponente al panel
+        videoPlayerPanel.revalidate(); // Refresca el panel para que muestre el reproductor
+        videoPlayerPanel.repaint();
+    }
     private void urlLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_urlLabelMouseClicked
         try {
             Desktop.getDesktop().browse(new URI("https://github.com/PauDebi/GymUserManager"));
@@ -210,11 +217,11 @@ public class MainFrame extends javax.swing.JFrame {
 
             // Verifica si la palabra acumulada coincide con una palabra clave
             String palabra = changeColor.toString();
-            if (palabra.endsWith("white")) { // Reemplaza "palabraClave" con la palabra que deseas detectar
+            if (palabra.endsWith("white")) {
                 cambiarColorWhite(); // Método que cambia el color o realiza alguna acción
                 changeColor.setLength(0); // Limpia el acumulador si es necesario
             }
-            if (palabra.endsWith("black")) { // Reemplaza "palabraClave" con la palabra que deseas detectar
+            if (palabra.endsWith("black")) {
                 cambiarColorBlack(); // Método que cambia el color o realiza alguna acción
                 changeColor.setLength(0); // Limpia el acumulador si es necesario
             }
@@ -245,6 +252,7 @@ public class MainFrame extends javax.swing.JFrame {
         isLoged = loged;
 
         updateVisibility(loged);
+        
 
         // Solo actualizamos la tabla y la lista de clientes si estamos logueados
         if (loged) {
@@ -261,7 +269,10 @@ public class MainFrame extends javax.swing.JFrame {
         //mediaPlayer.setVisible(loged);
         jScrollPane3.setVisible(loged);
     }
-    
+
+    public JTable getTablaIntentos() {
+        return tablaIntentos;
+    }
     
     
     /**
@@ -293,3 +304,4 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel videoPlayerPanel;
     // End of variables declaration//GEN-END:variables
 }
+
