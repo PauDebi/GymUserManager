@@ -62,6 +62,13 @@ public class MainFrame extends javax.swing.JFrame {
         tablaIntentos = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         userList = new javax.swing.JList<>();
+        restartVideoButton = new javax.swing.JButton();
+        playPauseButton = new javax.swing.JButton();
+        addReviewButton = new javax.swing.JButton();
+        modifyReviewButton = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GymUserManager");
@@ -162,6 +169,41 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(jScrollPane3);
         jScrollPane3.setBounds(40, 20, 150, 200);
 
+        restartVideoButton.setText("↺");
+        restartVideoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                restartVideoButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(restartVideoButton);
+        restartVideoButton.setBounds(50, 560, 30, 27);
+
+        playPauseButton.setText("⏯");
+        playPauseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playPauseButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(playPauseButton);
+        playPauseButton.setBounds(520, 560, 30, 27);
+
+        addReviewButton.setText("Add Review");
+        getContentPane().add(addReviewButton);
+        addReviewButton.setBounds(860, 560, 96, 27);
+
+        modifyReviewButton.setText("ModifyReview");
+        getContentPane().add(modifyReviewButton);
+        modifyReviewButton.setBounds(970, 560, 109, 27);
+
+        jMenu1.setText("File");
+
+        jMenuItem2.setText("About");
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
+
         setBounds(0, 0, 1206, 642);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -178,7 +220,6 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (URISyntaxException|IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }//GEN-LAST:event_urlLabelMouseClicked
 
     private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
@@ -227,6 +268,20 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formKeyPressed
+
+    private void playPauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playPauseButtonActionPerformed
+        if (mediaPlayerComponente.mediaPlayer().status().isPlaying()) {
+            mediaPlayerComponente.mediaPlayer().controls().pause();
+        } else {
+            mediaPlayerComponente.mediaPlayer().controls().play();
+        }
+    }//GEN-LAST:event_playPauseButtonActionPerformed
+
+    private void restartVideoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restartVideoButtonActionPerformed
+        mediaPlayerComponente.mediaPlayer().controls().stop(); // Detener el video si está en reproducción
+        mediaPlayerComponente.mediaPlayer().controls().setTime(0); // Reiniciar al inicio (0 ms)
+        mediaPlayerComponente.mediaPlayer().controls().play(); // Reproducir desde el inicio
+    }//GEN-LAST:event_restartVideoButtonActionPerformed
     
     public void cambiarColorWhite(){
         try {
@@ -266,8 +321,11 @@ public class MainFrame extends javax.swing.JFrame {
         urlLabel.setVisible(!loged);
         jScrollPane1.setVisible(loged);
         videoPlayerPanel.setVisible(loged);
-        //mediaPlayer.setVisible(loged);
         jScrollPane3.setVisible(loged);
+        playPauseButton.setVisible(loged);
+        restartVideoButton.setVisible(loged);
+        
+        
     }
 
     public JTable getTablaIntentos() {
@@ -294,10 +352,17 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addReviewButton;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel loginLogo;
     private javax.swing.JLabel mainLogo;
+    private javax.swing.JButton modifyReviewButton;
+    private javax.swing.JButton playPauseButton;
+    private javax.swing.JButton restartVideoButton;
     private javax.swing.JTable tablaIntentos;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JList<String> userList;
