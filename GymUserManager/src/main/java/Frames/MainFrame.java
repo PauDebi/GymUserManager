@@ -7,32 +7,41 @@ package Frames;
 import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /**
  *
  * @author Pau_Clase
  */
 public class MainFrame extends javax.swing.JFrame {
-   // private EmbeddedMediaPlayerComponent mediaPlayer
-    Boolean isLoged = false;
-    StringBuilder changeColor = new StringBuilder();
+    private EmbeddedMediaPlayerComponent mediaPlayer;
+    private Boolean isLoged = false;
+    private StringBuilder changeColor = new StringBuilder();
+    private ArrayList<File> videos = Logica.readVideos();
+    
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        mediaPlayer = new EmbeddedMediaPlayerComponent();
+        videoPlayerPanel.add(mediaPlayer, BorderLayout.CENTER);
+        Logica.addAcctionListenerTable(tablaIntentos, mediaPlayer, videos);
         setLogedState(false);
     }
 
@@ -249,6 +258,7 @@ public class MainFrame extends javax.swing.JFrame {
         urlLabel.setVisible(!loged);
         jScrollPane1.setVisible(loged);
         videoPlayerPanel.setVisible(loged);
+        //mediaPlayer.setVisible(loged);
         jScrollPane3.setVisible(loged);
     }
     
