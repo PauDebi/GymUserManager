@@ -4,17 +4,12 @@
  */
 package Frames;
 
+import DTOs.User;
 import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -32,7 +27,7 @@ public class MainFrame extends javax.swing.JFrame {
     private EmbeddedMediaPlayerComponent mediaPlayerComponente = new EmbeddedMediaPlayerComponent();
     private Boolean isLoged = false;
     private StringBuilder changeColor = new StringBuilder();
-    private ArrayList<File> videos = Logica.readVideos();
+    private User usuarioActivo = null;
     
 
     /**
@@ -40,8 +35,8 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        Logica.addAcctionListenerTable(tablaIntentos, mediaPlayerComponente, videos, this, videoPlayerPanel);
-        setLogedState(false); 
+        Logica.addAcctionListenerTable(mediaPlayerComponente, this);
+        setLogedState(false, null); 
         prepareVideoPlayer();
     }
 
@@ -176,7 +171,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(restartVideoButton);
-        restartVideoButton.setBounds(50, 560, 30, 27);
+        restartVideoButton.setBounds(50, 560, 30, 23);
 
         playPauseButton.setText("⏯");
         playPauseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -185,15 +180,25 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(playPauseButton);
-        playPauseButton.setBounds(520, 560, 30, 27);
+        playPauseButton.setBounds(520, 560, 30, 23);
 
         addReviewButton.setText("Add Review");
+        addReviewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addReviewButtonActionPerformed(evt);
+            }
+        });
         getContentPane().add(addReviewButton);
-        addReviewButton.setBounds(860, 560, 96, 27);
+        addReviewButton.setBounds(860, 560, 93, 23);
 
         modifyReviewButton.setText("ModifyReview");
+        modifyReviewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifyReviewButtonActionPerformed(evt);
+            }
+        });
         getContentPane().add(modifyReviewButton);
-        modifyReviewButton.setBounds(970, 560, 109, 27);
+        modifyReviewButton.setBounds(970, 560, 105, 23);
 
         jMenu1.setText("File");
 
@@ -214,22 +219,20 @@ public class MainFrame extends javax.swing.JFrame {
         videoPlayerPanel.revalidate(); // Refresca el panel para que muestre el reproductor
         videoPlayerPanel.repaint();
     }
+    
     private void urlLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_urlLabelMouseClicked
-        try {
-            Desktop.getDesktop().browse(new URI("https://github.com/PauDebi/GymUserManager"));
-        } catch (URISyntaxException|IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Logica.goToLink("https://github.com/PauDebi/GymUserManager");
     }//GEN-LAST:event_urlLabelMouseClicked
 
     private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
         if (isLoged)   
-            setLogedState(false);
+            setLogedState(false, null);
         else
-            new LogingDialog(this);
+            new LogingDialog(this, true);
     }//GEN-LAST:event_loginLogoMouseClicked
 
     private void userListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_userListValueChanged
+        // Cuando seleccionas un usuario de la lista de usuarios, se muestran todos sus intentos en la tabla de intentos
         if (!evt.getValueIsAdjusting()) { // Para evitar eventos duplicados
             String selectedClient = userList.getSelectedValue();
             if (selectedClient != null) {
@@ -282,6 +285,15 @@ public class MainFrame extends javax.swing.JFrame {
         mediaPlayerComponente.mediaPlayer().controls().setTime(0); // Reiniciar al inicio (0 ms)
         mediaPlayerComponente.mediaPlayer().controls().play(); // Reproducir desde el inicio
     }//GEN-LAST:event_restartVideoButtonActionPerformed
+
+    private void modifyReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyReviewButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_modifyReviewButtonActionPerformed
+
+    private void addReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReviewButtonActionPerformed
+        
+        //new AddReview(usuarioActivo);
+    }//GEN-LAST:event_addReviewButtonActionPerformed
     
     public void cambiarColorWhite(){
         try {
@@ -303,11 +315,11 @@ public class MainFrame extends javax.swing.JFrame {
     
     
     
-    public void setLogedState(boolean loged) {
+    public void setLogedState(boolean loged, User usuario) {
         isLoged = loged;
+        usuarioActivo = usuario;
 
         updateVisibility(loged);
-        
 
         // Solo actualizamos la tabla y la lista de clientes si estamos logueados
         if (loged) {
@@ -324,12 +336,17 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane3.setVisible(loged);
         playPauseButton.setVisible(loged);
         restartVideoButton.setVisible(loged);
-        
-        
+        modifyReviewButton.setVisible(loged);
+        addReviewButton.setVisible(loged);
     }
 
     public JTable getTablaIntentos() {
         return tablaIntentos;
+    }
+    
+    public void setReviewsButtonVisibility(boolean isReviewed){
+        addReviewButton.setVisible(!isReviewed);
+        modifyReviewButton.setVisible(isReviewed);
     }
     
     
@@ -350,6 +367,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReviewButton;

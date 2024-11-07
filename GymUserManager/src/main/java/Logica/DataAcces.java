@@ -189,4 +189,25 @@ public class DataAcces {
         
         return reviews;   
     }
+    
+    public void addReview(Review review){
+        Connection connection = getConnection();
+        
+        String sql = "insert into review (IdIntent, IdReviewer, Valoracio, Comentari) values(?, ?, ?, ?)";
+        
+        try (PreparedStatement insertStatement = connection.prepareStatement(sql);){
+            
+            insertStatement.setInt(1, review.getIdIntent());
+            insertStatement.setInt(2, review.getIdReviewer());
+            insertStatement.setInt(3, review.getValoracion());
+            insertStatement.setString(4, review.getComentari());
+            
+            insertStatement.executeUpdate();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 }

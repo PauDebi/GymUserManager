@@ -8,19 +8,25 @@ import DTOs.Intent;
 import DTOs.Review;
 import DTOs.User;
 import Frames.MainFrame;
-import Frames.VideoPlayerTest;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import at.favre.lib.crypto.bcrypt.BCrypt.Result;
-import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /**
@@ -30,9 +36,7 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 public class Logica {
     
     public static boolean canLogin(String email, char[] password){
-        
         DataAcces da = new DataAcces();
-        
         User user = da.getUser(email);
         if (user.getPaswordHash() == null)
             return false;
@@ -62,17 +66,14 @@ public class Logica {
             }
         }
         ArrayList<Review> reviews = da.getReviews();
-
         
-        for (Intent i : intents) {
-            String isReviewd = "No";
-            for (Review review : reviews) {
-                if (i.getId() == review.getIdIntent()) {
-                    isReviewd = "Si";
-                    break; // Salimos del bucle si encontramos una coincidencia
-                }
-            }
-            model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), isReviewd, i.getVideoFile()});
+        for (Intent i : intents) { // Añadir todos los intentos a la lista
+            model.addRow(new Object[]{
+                nombreUsuario,
+                i.getExercici(),
+                i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                (isReviewed( i, reviews))? "Si":"No" ,
+                i.getVideoFile()});
         }
         
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -89,6 +90,7 @@ public class Logica {
         model.setColumnIdentifiers(new Object[]{"Nombre", "Ejercicio", "Fecha", "Archivo de Video"});
 
         ArrayList<User> users = da.getUsuaris();
+        ArrayList<Review> reviews = da.getReviews();
         for(Intent i : intents){
             String nombreUsuario = "No User";
             for (User usuario : users)
@@ -97,17 +99,19 @@ public class Logica {
                     break;
                 }
             
-            if (!isReviewed(i))
-                model.addRow(new Object[]{nombreUsuario, i.getExercici(), i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), i.getVideoFile()});
+            if (!isReviewed(i, reviews))
+                model.addRow(new Object[]{
+                            nombreUsuario, 
+                            i.getExercici(), 
+                            i.getInici().format(DateTimeFormatter.ISO_LOCAL_DATE), 
+                            i.getVideoFile()});
         }
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.getSelectionModel().setSelectionInterval(0, 0);
 
     }
     
-    private static boolean isReviewed(Intent intento){
-        DataAcces da = new DataAcces();
-        ArrayList<Review> reviews = da.getReviews();
+    private static boolean isReviewed(Intent intento, ArrayList<Review> reviews){
         for (Review r : reviews){
             if (r.getIdIntent() == intento.getId()){
                 return true;
@@ -131,10 +135,17 @@ public class Logica {
 
         clientList.setModel(demoList);
     }
+    
+    public static void goToLink(String url){
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (URISyntaxException|IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-    public static ArrayList<File> readVideos() {
-        ArrayList<File> lista = new ArrayList<File>();
-        
+    public static HashMap<String, File> readVideos() {
+        HashMap<String, File> lista = new HashMap<String, File>();
         File directorio = new File("Archivos/videos");
         
         if (directorio.exists() && directorio.isDirectory()) {
@@ -144,7 +155,7 @@ public class Logica {
                 for (File archivo : archivos) {
                     // Filtra los archivos de video usando su extensión
                     if (archivo.isFile() && (archivo.getName().endsWith(".mp4"))) {
-                        lista.add(archivo); // Agrega el archivo de video a la lista
+                        lista.put(archivo.getName(),archivo); // Agrega el archivo de video a la lista
                     }
                 }
             }
@@ -153,34 +164,58 @@ public class Logica {
         return lista;
     }
 
-    public static void addAcctionListenerTable(JTable tablaIntentos, EmbeddedMediaPlayerComponent mediaPlayerComponente, ArrayList<File> videos, MainFrame frame, JPanel videoPlayerPanel) {
+    public static void addAcctionListenerTable(EmbeddedMediaPlayerComponent mediaPlayerComponente, MainFrame frame) {
+        JTable tablaIntentos = frame.getTablaIntentos();
+        HashMap<String, File> videos = Logica.readVideos();
         tablaIntentos.getSelectionModel().addListSelectionListener(evt -> {
-            JTable tablaAcutal = frame.getTablaIntentos();
                 if (!evt.getValueIsAdjusting()) { // Evitar eventos duplicados
-                    int selectedRow = tablaAcutal.getSelectedRow();
+                    int selectedRow = tablaIntentos.getSelectedRow();
                     if (selectedRow != -1) {
+                        manageButtonsReviews(frame);
                         // Obtener el nombre del video de la última columna en la fila seleccionada
-                        String videoName = (String) tablaAcutal.getValueAt(selectedRow, tablaAcutal.getColumnCount() - 1);
+                        String videoName = (String) tablaIntentos.getValueAt(selectedRow, tablaIntentos.getColumnCount() - 1);
 
                         // Buscar el archivo en la lista videos
-                        File videoFile = null;
-                        for (File file : videos){ // para evitar esto se podria hacer un map, pero al haber tan pocos archivos no lo veo necesario
-                            if (file.getName().equals(videoName)){
-                                videoFile = file;
-                                break;
-                            }
-                        }
+                        File videoFile = videos.get(videoName);
+                        
                         if (videoFile != null && videoFile.exists()) {
                             mediaPlayerComponente.mediaPlayer().media().play(videoFile.getAbsolutePath()); // Reproduce el video
-                            System.out.println("Reproduciendo: " + videoFile.getAbsolutePath());
                         } else {
                             System.out.println("No se encontró el archivo de video: " + videoName);
                         }
-
                     }
                 }
         });
     }
     
+    public static void manageButtonsReviews(MainFrame frame){
+        JTable tablaIntentos = frame.getTablaIntentos();
+        int selectedRow = tablaIntentos.getSelectedRow();
+        boolean isReviewed = false;
+        if (selectedRow != -1) {
+            if (tablaIntentos.getValueAt(selectedRow, 3).equals("Si")) { //Si ya esta revisado actualizamos la variable
+                isReviewed = true;
+            }
+            frame.setReviewsButtonVisibility(isReviewed);//Se muestra el boton correspondiente dependiendo de si esta revisado o por revisar
+        }
+    }
+    
+    
+    public static void addReview(String comentario, int nota, User usuario, int idIntento){
+        DataAcces da = new DataAcces();
+        
+        Review review = new Review();
+        
+        review.setComentari(comentario);
+        review.setIdReviewer(usuario.getId());
+        review.setValoracion(nota);
+        review.setIdIntent(idIntento);
+        
+        da.addReview(review);
+    }
+    
+    public static void getIntento(){
+        
+    }
 }
 

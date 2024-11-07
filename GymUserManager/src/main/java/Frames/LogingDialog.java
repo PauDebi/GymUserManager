@@ -4,6 +4,8 @@
  */
 package Frames;
 
+import DTOs.User;
+import Logica.DataAcces;
 import Logica.Logica;
 import java.awt.Color;
 
@@ -14,6 +16,8 @@ import java.awt.Color;
 public class LogingDialog extends javax.swing.JFrame {
     MainFrame mainFrame;
     
+    private boolean isDebuging = false;
+    
     public LogingDialog() {
         initComponents();
     }
@@ -22,6 +26,12 @@ public class LogingDialog extends javax.swing.JFrame {
         initComponents();
         this.mainFrame = mainFrame;
         this.setVisible(true);
+    }
+    public LogingDialog(MainFrame mainFrame, boolean debuging) {
+        initComponents();
+        this.mainFrame = mainFrame;
+        this.setVisible(true);
+        this.isDebuging = debuging;
     }
 
     /**
@@ -112,13 +122,14 @@ public class LogingDialog extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        DataAcces da = new DataAcces();
         String email = emailText.getText();
         char[] password = passwordText.getPassword();
         
         
-        
-        if (Logica.canLogin(email,password)){
-            mainFrame.setLogedState(true);
+        if (Logica.canLogin(email,password) || isDebuging){
+            User usuario = da.getUser(email);
+            mainFrame.setLogedState(true, usuario);
             this.dispose();
         }
             
