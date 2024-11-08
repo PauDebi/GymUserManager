@@ -28,6 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
     private Boolean isLoged = false;
     private StringBuilder changeColor = new StringBuilder();
     private User usuarioActivo = null;
+    private boolean isDebuging = false;
     
 
     /**
@@ -228,7 +229,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (isLoged)   
             setLogedState(false, null);
         else
-            new LogingDialog(this, true);
+            new LogingDialog(this, isDebuging);
     }//GEN-LAST:event_loginLogoMouseClicked
 
     private void userListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_userListValueChanged
@@ -297,7 +298,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         int idIntento = Logica.getIntento(idUsuario, idExercici).getId();
         
-        new AddReview(usuarioActivo, idIntento);
+        new AddReview(usuarioActivo, idIntento, this);
     }//GEN-LAST:event_addReviewButtonActionPerformed
     
     public void cambiarColorWhite(){
