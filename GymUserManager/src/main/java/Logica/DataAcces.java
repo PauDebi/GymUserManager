@@ -210,4 +210,55 @@ public class DataAcces {
         }
         
     }
+
+    public Intent getIntento(int idUsuario, int idExercici) {
+        Connection connection = getConnection();
+        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+                     "FROM Intents i " +
+                     "JOIN Exercicis e ON i.idExercici = e.Id " +
+                     "where IdUsuari = ? " +
+                     "and idExercici = ?";
+        
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql);){
+            selectStatement.setInt(1, idUsuario);
+            selectStatement.setInt(2, idExercici);
+            
+            ResultSet rs =  selectStatement.executeQuery();
+            rs.next();
+            
+            Timestamp timestampInici = rs.getTimestamp("Timestamp_Inici");
+            LocalDateTime inici = (timestampInici != null) ? timestampInici.toLocalDateTime() : null;
+            
+            Intent intento = new Intent();
+            intento.setId(rs.getInt("id"));
+            intento.setIdUsuari(rs.getInt("IdUsuari"));
+            intento.setExercici(rs.getString("Descripcio"));
+            intento.setInici(inici);
+            intento.setVideoFile(rs.getString("Videofile"));
+            
+            
+            return intento;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public int getIdExercici(String nombreEjercicio) {
+        Connection connection = getConnection();
+        String sql = "select Id from exercicis where descripcio = ?";
+        
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql);){
+            selectStatement.setString(1, nombreEjercicio);
+            
+            ResultSet rs =  selectStatement.executeQuery();
+            rs.next();
+            
+            return rs.getInt("Id");            
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
 }

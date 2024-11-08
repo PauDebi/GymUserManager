@@ -22,11 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /**
@@ -62,6 +60,7 @@ public class Logica {
         for (User usuario : users) {
             if (usuario.getId() == idUsuari){
                 nombreUsuario = usuario.getNom();
+                nombreUsuario += ":" + usuario.getId();
                 break;
             }
         }
@@ -96,6 +95,7 @@ public class Logica {
             for (User usuario : users)
                 if (usuario.getId() == i.getIdUsuari()){
                     nombreUsuario = usuario.getNom();
+                    nombreUsuario += ":" + usuario.getId();
                     break;
                 }
             
@@ -214,8 +214,36 @@ public class Logica {
         da.addReview(review);
     }
     
-    public static void getIntento(){
+    public static Intent getIntento(int idUsuario, int idExercici){
+        DataAcces da = new DataAcces();
+        return da.getIntento(idUsuario, idExercici);
+    }
+    
+    public static int getIdUsuarioSeleccionado(MainFrame frame){
+        JTable tablaIntentos = frame.getTablaIntentos();
+
+        int selectedRow = tablaIntentos.getSelectedRow();
+        if (selectedRow != -1) {
+            String usuario = (String) tablaIntentos.getValueAt(selectedRow, 0);
+            
+            String[] linea = usuario.split(":");
+            return Integer.parseInt(linea[1]);
+        }
+        return -1;
+    }
+    
+    public static int getIdExercici(MainFrame frame){
+        DataAcces da = new DataAcces();
+        JTable tablaIntentos = frame.getTablaIntentos();
+        int selectedRow = tablaIntentos.getSelectedRow();
+        String nombreEjercicio = "";
         
+        
+        if (selectedRow != -1) 
+            nombreEjercicio = (String) tablaIntentos.getValueAt(selectedRow, 1);
+        
+        System.out.println(nombreEjercicio);
+        return da.getIdExercici(nombreEjercicio);
     }
 }
 

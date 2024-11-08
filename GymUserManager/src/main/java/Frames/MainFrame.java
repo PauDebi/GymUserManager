@@ -291,8 +291,13 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_modifyReviewButtonActionPerformed
 
     private void addReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReviewButtonActionPerformed
+        int idUsuario = Logica.getIdUsuarioSeleccionado(this);
         
-        //new AddReview(usuarioActivo);
+        int idExercici = Logica.getIdExercici(this);
+        
+        int idIntento = Logica.getIntento(idUsuario, idExercici).getId();
+        
+        new AddReview(usuarioActivo, idIntento);
     }//GEN-LAST:event_addReviewButtonActionPerformed
     
     public void cambiarColorWhite(){
