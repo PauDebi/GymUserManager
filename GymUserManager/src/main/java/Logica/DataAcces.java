@@ -264,7 +264,7 @@ public class DataAcces {
 
     public void deleteReview(int idIntento) {
         Connection connection = getConnection();
-        String sql = "delete from review where idIntent = ?";
+        String sql = "delete from review where id = ?";
 
         try (PreparedStatement deleteStatement = connection.prepareStatement(sql);){
             deleteStatement.setInt(1, idIntento);
@@ -299,5 +299,21 @@ public class DataAcces {
         }
 
         return review;   
+    }
+
+    public void updateReview(int nota, String comentario , int idReview) {
+        Connection connection = getConnection();
+        
+        String sql = "Update review set valoracio = ?, comentari = ? where id = ?";
+        
+        try (PreparedStatement updateStatement = connection.prepareStatement(sql);){
+            updateStatement.setInt(1, nota);
+            updateStatement.setString(2, comentario);
+            updateStatement.setInt(3, idReview);
+            
+            updateStatement.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

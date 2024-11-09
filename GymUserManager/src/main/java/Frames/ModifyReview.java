@@ -7,6 +7,8 @@ package Frames;
 import DTOs.Intent;
 import DTOs.Review;
 import Logica.Logica;
+import java.awt.Color;
+import java.util.InputMismatchException;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,8 +32,10 @@ public class ModifyReview extends javax.swing.JFrame {
         this.review = review;
         this.intento = intento;
         initComponents();
+        errorLabel.setForeground(Color.red);
         
         prepararInformacion();
+        this.setVisible(true);
     }
 
     /**
@@ -54,8 +58,9 @@ public class ModifyReview extends javax.swing.JFrame {
         textFieldComentario = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        errorLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Usuario: ");
 
@@ -76,6 +81,11 @@ public class ModifyReview extends javax.swing.JFrame {
         jScrollPane1.setViewportView(textFieldComentario);
 
         jButton1.setText("Guardar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Cancelar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -114,7 +124,9 @@ public class ModifyReview extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(errorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -140,7 +152,8 @@ public class ModifyReview extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -158,6 +171,41 @@ public class ModifyReview extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        
+        int nota;
+        String comentario = textFieldComentario.getText();
+        try {
+            nota = Integer.parseInt(textFieldNota.getText());
+        }
+        catch (NumberFormatException e){
+            errorLabel.setText("Tienes que poner un numero en la nota");
+            return;
+        }
+        if (nota < 0 || nota > 5){
+            errorLabel.setText("La nota tiene que ser entre 0 y 5");
+            return;
+        }
+        if (comentario.isBlank()){
+            errorLabel.setText("Tienes que escribir un comentario");
+            return;
+        }
+        
+        
+        int n = JOptionPane.showConfirmDialog(this,"Estas seguro de que quieres Guardar estos datos?n", "", JOptionPane.YES_NO_OPTION);
+         if (n != 0)
+           return;
+         
+        
+            
+        Logica.updateReview(nota, comentario, review.getId());
+        
+        Logica.updateTable(frame.getTablaIntentos());
+        
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void prepararInformacion() {
         nombreUsuario.setText(Logica.getUser(intento.getIdUsuari()).getNom());
@@ -203,6 +251,7 @@ public class ModifyReview extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel errorLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;

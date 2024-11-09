@@ -27,12 +27,6 @@ public class LogingDialog extends javax.swing.JFrame {
         this.mainFrame = mainFrame;
         this.setVisible(true);
     }
-    public LogingDialog(MainFrame mainFrame, boolean debuging) {
-        initComponents();
-        this.mainFrame = mainFrame;
-        this.setVisible(true);
-        this.isDebuging = debuging;
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -130,6 +124,7 @@ public class LogingDialog extends javax.swing.JFrame {
         if (Logica.canLogin(email,password) || isDebuging){
             User usuario = da.getUser(email);
             mainFrame.setLogedState(true, usuario);
+            mainFrame.setIsLoggingIn(false);
             this.dispose();
         }
             

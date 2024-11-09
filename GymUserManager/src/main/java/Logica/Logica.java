@@ -71,6 +71,7 @@ public class Logica {
         
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.getSelectionModel().setSelectionInterval(0, 0);
+        
     }
     
     public static User getUser(int idUsuario){
@@ -196,6 +197,20 @@ public class Logica {
         });
     }
     
+    
+    public static void addAcctionListenerTableReview(EmbeddedMediaPlayerComponent mediaPlayerComponente, MainFrame frame) {
+        JTable tablaReview = frame.getTablaReviews();
+        tablaReview.getSelectionModel().addListSelectionListener(evt -> {
+                if (!evt.getValueIsAdjusting()) { // Evitar eventos duplicados
+                    int selectedRow = tablaReview.getSelectedRow();
+                    if (selectedRow != -1) {
+                        Intent intento = getIntento(getIdUsuarioSeleccionado(frame), getIdExercici(frame));
+                        
+                    }
+                }
+        });
+    }
+    
     public static void manageButtonsReviews(MainFrame frame){
         JTable tablaIntentos = frame.getTablaIntentos();
         int selectedRow = tablaIntentos.getSelectedRow();
@@ -219,6 +234,7 @@ public class Logica {
             }
             else{
                 frame.getPanelTablaReviews().setVisible(false);
+                frame.setModifyReviewButtonVisibility(false);
             }
         }
         
@@ -227,11 +243,12 @@ public class Logica {
     
     public static void updateTablaReviews(JTable tabla ,Intent intento, MainFrame frame){
         frame.getPanelTablaReviews().setVisible(true);
+        frame.setModifyReviewButtonVisibility(true);
         DataAcces da = new DataAcces();
         DefaultTableModel model = (DefaultTableModel) tabla.getModel();
         model.setRowCount(0);
         model.setColumnCount(4);
-        model.setColumnIdentifiers(new Object[]{"Reviewer", "IdReviewer", "Comentario", "Nota"});
+        model.setColumnIdentifiers(new Object[]{"Reviewer", "IdReview", "Comentario", "Nota"});
         
         ArrayList<Review> reviews = da.getReviews();
         
@@ -240,12 +257,14 @@ public class Logica {
                 String nombreUsuario = getUser(r.getIdReviewer()).getNom();
                 model.addRow(new Object[]{
                             nombreUsuario,
-                            r.getIdReviewer(),
+                            r.getId(),
                             r.getComentari(),
                             r.getValoracion()
                 });
             }
         }
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabla.getSelectionModel().setSelectionInterval(0, 0);
         
     }
     
@@ -294,14 +313,31 @@ public class Logica {
         return da.getIdExercici(nombreEjercicio);
     }
 
-    public static void deleteReview(int idReviewer, int idIntento) {
+    public static void deleteReview(int idReview) {
         DataAcces da = new DataAcces();
-        da.deleteReview(idIntento);
+        da.deleteReview(idReview);
     }
 
-    public static Review getReview(int idIntento) {
+    public static Review getSelectedReview(MainFrame frame) {
         DataAcces da = new DataAcces();
-        return da.getReview(idIntento);
+        JTable tabla = frame.getTablaReviews();
+        int selectedRow = tabla.getSelectedRow();
+        int idReview = (int) tabla.getValueAt(selectedRow, 1);
+        ArrayList<Review> reviews = da.getReviews();
+        
+        for (Review r : reviews){
+            if (r.getId() == idReview){
+                return r;
+            }
+        }
+        
+        return new Review();
     }
+
+    public static void updateReview(int nota, String comentario, int idReview) {
+        DataAcces da = new DataAcces();
+        da.updateReview(nota, comentario, idReview);
+    }
+
 }
 

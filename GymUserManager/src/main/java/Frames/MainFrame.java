@@ -5,6 +5,7 @@
 package Frames;
 
 import DTOs.Intent;
+import DTOs.Review;
 import DTOs.User;
 import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -31,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
     private Boolean isLoged = false;
     private StringBuilder changeColor = new StringBuilder();
     private User usuarioActivo = null;
-    private boolean isDebuging = true;
+    private boolean isLoggingIn = false;
     
 
     /**
@@ -86,7 +87,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(mainLogo);
         mainLogo.setBounds(420, 160, 370, 300);
 
-        urlLabel.setText("User Manager");
+        urlLabel.setText("GitHub");
         urlLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         urlLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -94,7 +95,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(urlLabel);
-        urlLabel.setBounds(1100, 570, 80, 20);
+        urlLabel.setBounds(1110, 570, 80, 20);
 
         ImageIcon icono = new javax.swing.ImageIcon("./Archivos/Login.png");
 
@@ -269,10 +270,16 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_urlLabelMouseClicked
 
     private void loginLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginLogoMouseClicked
+        if (isLoggingIn)
+            return;
+        
         if (isLoged)   
             setLogedState(false, null);
-        else
-            new LogingDialog(this, isDebuging);
+        
+        else{
+            isLoggingIn = true;
+            new LogingDialog(this);
+        }
     }//GEN-LAST:event_loginLogoMouseClicked
 
     private void userListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_userListValueChanged
@@ -335,11 +342,9 @@ public class MainFrame extends javax.swing.JFrame {
         if (n != 0)
            return;
         
-        int idReviewer = usuarioActivo.getId();
         int idUsuario = Logica.getIdUsuarioSeleccionado(this);
-        int idExercici = Logica.getIdExercici(this);
-        int idIntento = Logica.getIntento(idUsuario, idExercici).getId();
-        Logica.deleteReview(idReviewer, idIntento);
+        int idReview = Logica.getSelectedReview(this).getId();
+        Logica.deleteReview(idReview);
         Logica.updateTable(idUsuario, tablaIntentos);
     }//GEN-LAST:event_deleteReviewButtonActionPerformed
 
@@ -357,9 +362,9 @@ public class MainFrame extends javax.swing.JFrame {
         int idUsuario = Logica.getIdUsuarioSeleccionado(this);
         int idExercici = Logica.getIdExercici(this);
         Intent intento = Logica.getIntento(idUsuario, idExercici);
-        //Review review = Logica.getReview(usuarioActivo.getId(), intento.getId());
+        Review review = Logica.getSelectedReview(this);
         
-        //new ModifyReview(this, review, intento);
+        new ModifyReview(this, review, intento);
     }//GEN-LAST:event_modifyReviewButtonActionPerformed
     
     public void cambiarColorWhite(){
@@ -380,6 +385,8 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
+     
+     
     
     
     public void setLogedState(boolean loged, User usuario) {
@@ -422,12 +429,19 @@ public class MainFrame extends javax.swing.JFrame {
         return panelTablaReviews;
     }
     
+    public void setModifyReviewButtonVisibility(boolean isVisible){
+        modifyReviewButton.setVisible(isVisible);
+    }
+    
+    public void setIsLoggingIn(boolean isLoggingIn){
+        this.isLoggingIn = isLoggingIn;
+    }
+    
     
     
     public void setReviewsButtonVisibility(boolean isReviewed){
         addReviewButton.setVisible(!isReviewed);
         deleteReviewButton.setVisible(isReviewed);
-        modifyReviewButton.setVisible(isReviewed);
     }
     
     
