@@ -4,6 +4,7 @@
  */
 package Frames;
 
+import DTOs.Intent;
 import DTOs.User;
 import Logica.Logica;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -13,6 +14,8 @@ import java.awt.Image;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -28,7 +31,7 @@ public class MainFrame extends javax.swing.JFrame {
     private Boolean isLoged = false;
     private StringBuilder changeColor = new StringBuilder();
     private User usuarioActivo = null;
-    private boolean isDebuging = false;
+    private boolean isDebuging = true;
     
 
     /**
@@ -61,7 +64,10 @@ public class MainFrame extends javax.swing.JFrame {
         restartVideoButton = new javax.swing.JButton();
         playPauseButton = new javax.swing.JButton();
         addReviewButton = new javax.swing.JButton();
+        deleteReviewButton = new javax.swing.JButton();
         modifyReviewButton = new javax.swing.JButton();
+        panelTablaReviews = new javax.swing.JScrollPane();
+        tableReview = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -88,7 +94,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(urlLabel);
-        urlLabel.setBounds(1090, 550, 80, 20);
+        urlLabel.setBounds(1100, 570, 80, 20);
 
         ImageIcon icono = new javax.swing.ImageIcon("./Archivos/Login.png");
 
@@ -172,7 +178,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(restartVideoButton);
-        restartVideoButton.setBounds(50, 560, 30, 23);
+        restartVideoButton.setBounds(50, 560, 30, 27);
 
         playPauseButton.setText("⏯");
         playPauseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -181,7 +187,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(playPauseButton);
-        playPauseButton.setBounds(520, 560, 30, 23);
+        playPauseButton.setBounds(520, 560, 30, 27);
 
         addReviewButton.setText("Add Review");
         addReviewButton.addActionListener(new java.awt.event.ActionListener() {
@@ -190,16 +196,53 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(addReviewButton);
-        addReviewButton.setBounds(860, 560, 93, 23);
+        addReviewButton.setBounds(846, 560, 110, 27);
 
-        modifyReviewButton.setText("ModifyReview");
+        deleteReviewButton.setText("Delete Review");
+        deleteReviewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteReviewButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(deleteReviewButton);
+        deleteReviewButton.setBounds(730, 560, 109, 27);
+
+        modifyReviewButton.setText("Modify Review");
         modifyReviewButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 modifyReviewButtonActionPerformed(evt);
             }
         });
         getContentPane().add(modifyReviewButton);
-        modifyReviewButton.setBounds(970, 560, 105, 23);
+        modifyReviewButton.setBounds(967, 560, 112, 27);
+
+        tableReview.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Reviewer", "IdReview", "Comentario", "Nota"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        panelTablaReviews.setViewportView(tableReview);
+        if (tableReview.getColumnModel().getColumnCount() > 0) {
+            tableReview.getColumnModel().getColumn(1).setResizable(false);
+            tableReview.getColumnModel().getColumn(2).setResizable(false);
+        }
+
+        getContentPane().add(panelTablaReviews);
+        panelTablaReviews.setBounds(200, 20, 350, 200);
 
         jMenu1.setText("File");
 
@@ -287,9 +330,18 @@ public class MainFrame extends javax.swing.JFrame {
         mediaPlayerComponente.mediaPlayer().controls().play(); // Reproducir desde el inicio
     }//GEN-LAST:event_restartVideoButtonActionPerformed
 
-    private void modifyReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyReviewButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_modifyReviewButtonActionPerformed
+    private void deleteReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteReviewButtonActionPerformed
+        int n = JOptionPane.showConfirmDialog(this,"Are you sure that you want to delete this review?", "", JOptionPane.YES_NO_OPTION);
+        if (n != 0)
+           return;
+        
+        int idReviewer = usuarioActivo.getId();
+        int idUsuario = Logica.getIdUsuarioSeleccionado(this);
+        int idExercici = Logica.getIdExercici(this);
+        int idIntento = Logica.getIntento(idUsuario, idExercici).getId();
+        Logica.deleteReview(idReviewer, idIntento);
+        Logica.updateTable(idUsuario, tablaIntentos);
+    }//GEN-LAST:event_deleteReviewButtonActionPerformed
 
     private void addReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReviewButtonActionPerformed
         int idUsuario = Logica.getIdUsuarioSeleccionado(this);
@@ -300,6 +352,15 @@ public class MainFrame extends javax.swing.JFrame {
         
         new AddReview(usuarioActivo, idIntento, this);
     }//GEN-LAST:event_addReviewButtonActionPerformed
+
+    private void modifyReviewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyReviewButtonActionPerformed
+        int idUsuario = Logica.getIdUsuarioSeleccionado(this);
+        int idExercici = Logica.getIdExercici(this);
+        Intent intento = Logica.getIntento(idUsuario, idExercici);
+        //Review review = Logica.getReview(usuarioActivo.getId(), intento.getId());
+        
+        //new ModifyReview(this, review, intento);
+    }//GEN-LAST:event_modifyReviewButtonActionPerformed
     
     public void cambiarColorWhite(){
         try {
@@ -342,16 +403,30 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane3.setVisible(loged);
         playPauseButton.setVisible(loged);
         restartVideoButton.setVisible(loged);
-        modifyReviewButton.setVisible(loged);
+        deleteReviewButton.setVisible(loged);
         addReviewButton.setVisible(loged);
+        modifyReviewButton.setVisible(loged);
+        panelTablaReviews.setVisible(loged);
+        tableReview.setVisible(loged);
     }
 
     public JTable getTablaIntentos() {
         return tablaIntentos;
     }
+   
+    public JTable getTablaReviews() {
+        return tableReview;
+    }
+
+    public JScrollPane getPanelTablaReviews() {
+        return panelTablaReviews;
+    }
+    
+    
     
     public void setReviewsButtonVisibility(boolean isReviewed){
         addReviewButton.setVisible(!isReviewed);
+        deleteReviewButton.setVisible(isReviewed);
         modifyReviewButton.setVisible(isReviewed);
     }
     
@@ -377,6 +452,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReviewButton;
+    private javax.swing.JButton deleteReviewButton;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -385,9 +461,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel loginLogo;
     private javax.swing.JLabel mainLogo;
     private javax.swing.JButton modifyReviewButton;
+    private javax.swing.JScrollPane panelTablaReviews;
     private javax.swing.JButton playPauseButton;
     private javax.swing.JButton restartVideoButton;
     private javax.swing.JTable tablaIntentos;
+    private javax.swing.JTable tableReview;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JList<String> userList;
     private javax.swing.JPanel videoPlayerPanel;

@@ -55,15 +55,9 @@ public class Logica {
         model.setColumnCount(5);
         model.setColumnIdentifiers(new Object[]{"Nombre", "Ejercicio", "Fecha", "Esta Revisado", "Archivo de Video"});
 
-        String nombreUsuario = "No User";
-        ArrayList<User> users = da.getUsuaris();
-        for (User usuario : users) {
-            if (usuario.getId() == idUsuari){
-                nombreUsuario = usuario.getNom();
-                nombreUsuario += ":" + usuario.getId();
-                break;
-            }
-        }
+        User usuari = getUser(idUsuari);
+        String nombreUsuario = usuari.getNom() + ":" + usuari.getId();
+        
         ArrayList<Review> reviews = da.getReviews();
         
         for (Intent i : intents) { // Añadir todos los intentos a la lista
@@ -77,6 +71,18 @@ public class Logica {
         
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.getSelectionModel().setSelectionInterval(0, 0);
+    }
+    
+    public static User getUser(int idUsuario){
+        DataAcces da = new DataAcces();
+        ArrayList<User> users = da.getUsuaris();
+        
+        for (User usuario : users) {
+            if (usuario.getId() == idUsuario){
+                return usuario;
+            }
+        }
+        return new User();
     }
         
     public static void updateTable(JTable tabla){
@@ -110,7 +116,7 @@ public class Logica {
         tabla.getSelectionModel().setSelectionInterval(0, 0);
 
     }
-    
+            
     private static boolean isReviewed(Intent intento, ArrayList<Review> reviews){
         for (Review r : reviews){
             if (r.getIdIntent() == intento.getId()){
@@ -172,6 +178,8 @@ public class Logica {
                     int selectedRow = tablaIntentos.getSelectedRow();
                     if (selectedRow != -1) {
                         manageButtonsReviews(frame);
+                        Intent intento = getIntento(getIdUsuarioSeleccionado(frame), getIdExercici(frame));
+                        manageReviewTable(frame, intento);
                         // Obtener el nombre del video de la última columna en la fila seleccionada
                         String videoName = (String) tablaIntentos.getValueAt(selectedRow, tablaIntentos.getColumnCount() - 1);
 
@@ -198,6 +206,47 @@ public class Logica {
             }
             frame.setReviewsButtonVisibility(isReviewed);//Se muestra el boton correspondiente dependiendo de si esta revisado o por revisar
         }
+    }
+    
+    public static void manageReviewTable(MainFrame frame, Intent intento){
+        JTable tablaIntentos = frame.getTablaIntentos();
+        JTable tablaReviews = frame.getTablaReviews();
+        int selectedRow = tablaIntentos.getSelectedRow();
+        
+         if (selectedRow != -1) {
+            if (tablaIntentos.getValueAt(selectedRow, 3).equals("Si")) { //Si ya esta revisado actualizamos la variable
+                updateTablaReviews(tablaReviews, intento, frame);
+            }
+            else{
+                frame.getPanelTablaReviews().setVisible(false);
+            }
+        }
+        
+        
+    }
+    
+    public static void updateTablaReviews(JTable tabla ,Intent intento, MainFrame frame){
+        frame.getPanelTablaReviews().setVisible(true);
+        DataAcces da = new DataAcces();
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+        model.setRowCount(0);
+        model.setColumnCount(4);
+        model.setColumnIdentifiers(new Object[]{"Reviewer", "IdReviewer", "Comentario", "Nota"});
+        
+        ArrayList<Review> reviews = da.getReviews();
+        
+        for (Review r : reviews){
+            if (r.getIdIntent() == intento.getId()) {
+                String nombreUsuario = getUser(r.getIdReviewer()).getNom();
+                model.addRow(new Object[]{
+                            nombreUsuario,
+                            r.getIdReviewer(),
+                            r.getComentari(),
+                            r.getValoracion()
+                });
+            }
+        }
+        
     }
     
     
@@ -242,8 +291,17 @@ public class Logica {
         if (selectedRow != -1) 
             nombreEjercicio = (String) tablaIntentos.getValueAt(selectedRow, 1);
         
-        System.out.println(nombreEjercicio);
         return da.getIdExercici(nombreEjercicio);
+    }
+
+    public static void deleteReview(int idReviewer, int idIntento) {
+        DataAcces da = new DataAcces();
+        da.deleteReview(idIntento);
+    }
+
+    public static Review getReview(int idIntento) {
+        DataAcces da = new DataAcces();
+        return da.getReview(idIntento);
     }
 }
 

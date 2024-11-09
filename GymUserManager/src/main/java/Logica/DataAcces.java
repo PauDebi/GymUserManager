@@ -96,7 +96,7 @@ public class DataAcces {
     public ArrayList<Intent> getIntents(int idUsuari){
         ArrayList<Intent> intents = new ArrayList<>();
         Connection connection = getConnection();
-        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+        String sql = "SELECT i.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
                      "FROM Intents i " +
                      "JOIN Exercicis e ON i.idExercici = e.Id " +
                      "WHERE i.idUsuari = ?;";
@@ -134,7 +134,7 @@ public class DataAcces {
     public ArrayList<Intent> getIntents(){
         ArrayList<Intent> intents = new ArrayList<>();
         Connection connection = getConnection();
-        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+        String sql = "SELECT i.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
                      "FROM Intents i " +
                      "JOIN Exercicis e ON i.idExercici = e.Id ";
 
@@ -213,7 +213,7 @@ public class DataAcces {
 
     public Intent getIntento(int idUsuario, int idExercici) {
         Connection connection = getConnection();
-        String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+        String sql = "SELECT i.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
                      "FROM Intents i " +
                      "JOIN Exercicis e ON i.idExercici = e.Id " +
                      "where IdUsuari = ? " +
@@ -260,5 +260,44 @@ public class DataAcces {
             Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
         }
         return -1;
+    }
+
+    public void deleteReview(int idIntento) {
+        Connection connection = getConnection();
+        String sql = "delete from review where idIntent = ?";
+
+        try (PreparedStatement deleteStatement = connection.prepareStatement(sql);){
+            deleteStatement.setInt(1, idIntento);
+
+            deleteStatement.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public Review getReview(int idIntento){
+        Review review = new Review();
+        Connection connection = getConnection();
+
+        String sql = "select * from review where idIntent = ?";
+
+        try (PreparedStatement selectStatement = connection.prepareStatement(sql);){
+            selectStatement.setInt(1, idIntento);
+            
+            ResultSet resultSet =  selectStatement.executeQuery();
+
+            review.setId(resultSet.getInt("Id"));
+            review.setIdIntent(resultSet.getInt("IdIntent"));
+            review.setIdReviewer(resultSet.getInt("IdReviewer"));
+            review.setValoracion(resultSet.getInt("Valoracio"));
+            review.setComentari(resultSet.getString("Comentari"));
+                
+            return review;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAcces.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return review;   
     }
 }
