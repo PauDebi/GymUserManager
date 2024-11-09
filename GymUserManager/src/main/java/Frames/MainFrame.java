@@ -69,6 +69,7 @@ public class MainFrame extends javax.swing.JFrame {
         modifyReviewButton = new javax.swing.JButton();
         panelTablaReviews = new javax.swing.JScrollPane();
         tableReview = new javax.swing.JTable();
+        area = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -245,6 +246,15 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(panelTablaReviews);
         panelTablaReviews.setBounds(200, 20, 350, 200);
 
+        area.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        area.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                areaMouseClicked(evt);
+            }
+        });
+        getContentPane().add(area);
+        area.setBounds(10, 460, 300, 150);
+
         jMenu1.setText("File");
 
         jMenuItem2.setText("About");
@@ -366,6 +376,15 @@ public class MainFrame extends javax.swing.JFrame {
         
         new ModifyReview(this, review, intento);
     }//GEN-LAST:event_modifyReviewButtonActionPerformed
+
+    private void areaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_areaMouseClicked
+        if (area.getText().isBlank())
+            area.setText("Si lees esto, escribe 'white', luego prueba con 'black'");
+        else
+            area.setText("");
+        
+        
+    }//GEN-LAST:event_areaMouseClicked
     
     public void cambiarColorWhite(){
         try {
@@ -415,6 +434,7 @@ public class MainFrame extends javax.swing.JFrame {
         modifyReviewButton.setVisible(loged);
         panelTablaReviews.setVisible(loged);
         tableReview.setVisible(loged);
+        area.setVisible(!loged);
     }
 
     public JTable getTablaIntentos() {
@@ -444,6 +464,10 @@ public class MainFrame extends javax.swing.JFrame {
         deleteReviewButton.setVisible(isReviewed);
     }
     
+    public User getCurrentUser(){
+        return usuarioActivo;
+    }
+    
     
     /**
      * @param args the command line arguments
@@ -466,6 +490,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReviewButton;
+    private javax.swing.JLabel area;
     private javax.swing.JButton deleteReviewButton;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;

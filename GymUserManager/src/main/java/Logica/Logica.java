@@ -334,10 +334,10 @@ public class Logica {
         return new Review();
     }
 
-    public static void updateReview(int nota, String comentario, int idReview) {
+    public static void updateReview(int nota, String comentario, int idReview , MainFrame frame) {
+        int idReviewer = frame.getCurrentUser().getId();
         DataAcces da = new DataAcces();
-        da.updateReview(nota, comentario, idReview);
+        da.updateReview(nota, comentario, idReview, idReviewer);
     }
-
 }
 

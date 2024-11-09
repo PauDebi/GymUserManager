@@ -8,7 +8,6 @@ import DTOs.Intent;
 import DTOs.Review;
 import Logica.Logica;
 import java.awt.Color;
-import java.util.InputMismatchException;
 import javax.swing.JOptionPane;
 
 /**
@@ -67,12 +66,6 @@ public class ModifyReview extends javax.swing.JFrame {
         jLabel2.setText("Ejercicio:");
 
         jLabel3.setText("Puntuacion:");
-
-        textFieldNota.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldNotaActionPerformed(evt);
-            }
-        });
 
         jLabel4.setText("Comentario:");
 
@@ -160,10 +153,6 @@ public class ModifyReview extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textFieldNotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNotaActionPerformed
-        
-    }//GEN-LAST:event_textFieldNotaActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
          int n = JOptionPane.showConfirmDialog(this,"Estas seguro de que quieres salir? Los cambios no se guardaran", "", JOptionPane.YES_NO_OPTION);
          if (n != 0)
@@ -173,8 +162,6 @@ public class ModifyReview extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        
         int nota;
         String comentario = textFieldComentario.getText();
         try {
@@ -200,7 +187,7 @@ public class ModifyReview extends javax.swing.JFrame {
          
         
             
-        Logica.updateReview(nota, comentario, review.getId());
+        Logica.updateReview(nota, comentario, review.getId(), frame);
         
         Logica.updateTable(frame.getTablaIntentos());
         

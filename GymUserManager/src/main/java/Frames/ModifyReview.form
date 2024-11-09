@@ -121,9 +121,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="textFieldNota">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textFieldNotaActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>

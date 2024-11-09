@@ -301,15 +301,16 @@ public class DataAcces {
         return review;   
     }
 
-    public void updateReview(int nota, String comentario , int idReview) {
+    public void updateReview(int nota, String comentario , int idReview, int idReviewer) {
         Connection connection = getConnection();
         
-        String sql = "Update review set valoracio = ?, comentari = ? where id = ?";
+        String sql = "Update review set valoracio = ?, comentari = ?, idReviewer = ? where id = ?";
         
         try (PreparedStatement updateStatement = connection.prepareStatement(sql);){
             updateStatement.setInt(1, nota);
             updateStatement.setString(2, comentario);
-            updateStatement.setInt(3, idReview);
+            updateStatement.setInt(3, idReviewer);
+            updateStatement.setInt(4, idReview);
             
             updateStatement.execute();
         } catch (SQLException ex) {
