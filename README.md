@@ -1,5 +1,4 @@
-Inicialización del Proyecto
-	Se crea el proyecto con un commit inicial. Se configura la estructura básica de carpetas y dependencias para iniciar el desarrollo.
+#Updates
 
 Añadido de Logo y Temas de Interfaz
 	Se incorpora un logo y se aplica el tema FlatLafDark para modernizar la apariencia de la interfaz de usuario. También se implementa la funcionalidad de hipervínculos en la interfaz gráfica.
@@ -36,20 +35,18 @@ al usar el .setVisible(true), porque lo agregaba despues de inicializar los comp
 
 A mitad del proyecto me di cuenta de que la mitad de funciones estaban mal hechas, ya que solicitaban valores a la base de datos con informacion erronea o insufuciente
 Tambien con algunas sentencias sql en vez de usar: 
-			     |
-			     v
+ 
 ______________________________________________________________________________________________
-	String sql = "SELECT i.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+	String sql = "SELECT $i.id$, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
                      	"FROM Intents i " +
                      	"JOIN Exercicis e ON i.idExercici = e.Id " +
                      	"where IdUsuari = ? " +
                      	"and idExercici = ?";
 ______________________________________________________________________________________________
 
-Usaba			     |
-			     v
+Usaba			     
 ______________________________________________________________________________________________
-	String sql = "SELECT e.id, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
+	String sql = "SELECT $e.id$, e.Descripcio, Timestamp_inici, IdUsuari, Videofile " +
                      	"FROM Intents i " +
                      	"JOIN Exercicis e ON i.idExercici = e.Id " +
                      	"where IdUsuari = ? " +
